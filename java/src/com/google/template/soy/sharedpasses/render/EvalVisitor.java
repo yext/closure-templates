@@ -448,10 +448,11 @@ public class EvalVisitor extends AbstractReturningExprNodeVisitor<SoyValue> {
                   itemAccess.toSourceString(), itemAccess.getSourceStringSuffix()));
         }
       }
-
-      // This behavior is not ideal, but needed for compatibility with existing code.
-      // TODO: If feasible, find and fix existing instances, then throw RenderException here.
-      return UndefinedData.INSTANCE;
+      // PATCH(robfig): Throw RenderException due to non-nullsafe access on null.
+      throw RenderException.create(String.format(
+            "While evaluating \"%s\", encountered null just before accessing \"%s\".",
+            itemAccess.toSourceString(),
+            itemAccess.getSourceStringSuffix()));
     }
 
     // base is a valid SoyMap or SoyLegacyObjectMap: get value

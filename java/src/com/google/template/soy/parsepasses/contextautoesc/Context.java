@@ -258,6 +258,7 @@ public final class Context {
     UriPart uriPart = UriPart.NONE;
     switch (attrType) {
       case PLAIN_TEXT:
+      case TYPE:
         state = HtmlContext.HTML_NORMAL_ATTR_VALUE;
         break;
       case SCRIPT:
@@ -1267,6 +1268,8 @@ public final class Context {
     } else if (elType == Context.ElementType.SCRIPT && "src".equals(attrName)) {
       attr = Context.AttributeType.URI;
       uriType = Context.UriType.TRUSTED_RESOURCE;
+    } else if (elType == Context.ElementType.SCRIPT && "type".equals(attrName)) {
+      attr = Context.AttributeType.TYPE;
     } else if (URI_ATTR_NAMES.contains(localName)
         || CUSTOM_URI_ATTR_NAMING_CONVENTION.matcher(localName).find()
         || "xmlns".equals(attrName)
@@ -1336,7 +1339,10 @@ public final class Context {
     /** A URI or URI reference. */
     URI,
 
-    /** Other content. Human readable or other non-structured plain text or keyword values. */
+    /** A Mime-type attribute that specifies the child content type of a special tag. */
+    TYPE,
+
+    /** Other content.  Human readable or other non-structured plain text or keyword values. */
     PLAIN_TEXT,
     ;
   }

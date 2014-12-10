@@ -32,13 +32,13 @@ import java.util.List;
  *
  * @author brndn@google.com (Brendan Linn)
  */
-final class ErrorReporterImpl extends ErrorReporter {
+public final class ErrorReporterImpl extends ErrorReporter {
 
   private final List<SoyError> errors = new ArrayList<>();
   private final List<SoyError> warnings = new ArrayList<>();
   private final ImmutableMap<String, SoyFileSupplier> filePathsToSuppliers;
 
-  ErrorReporterImpl(ImmutableMap<String, SoyFileSupplier> filePathsToSuppliers) {
+  public ErrorReporterImpl(ImmutableMap<String, SoyFileSupplier> filePathsToSuppliers) {
     this.filePathsToSuppliers = filePathsToSuppliers;
   }
 

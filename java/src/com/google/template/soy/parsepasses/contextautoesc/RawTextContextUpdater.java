@@ -629,6 +629,24 @@ final class RawTextContextUpdater {
     };
   }
 
+  /**
+   * Matches a Mime-type value and overrides the deduced element type if in the context of a
+   * Mime-type attribute value.
+   */
+  private static Transition makeTransitionToMimeType(String mime, final Context.ElementType el) {
+    String regex = "(?i)^" + mime;
+    return new Transition(regex) {
+      @Override boolean isApplicableTo(Context prior, Matcher matcher) {
+        return prior.attrType == Context.AttributeType.TYPE;
+      }
+      @Override Context computeNextContext(Context prior, Matcher matcher) {
+        return prior.toBuilder()
+                    .withElType(el)
+                    .build();
+      }
+    };
+  }
+
   /** Characters that break a line in JavaScript source suitable for use in a regex charset. */
   private static final String JS_LINEBREAKS = "\\r\\n\u2028\u2029";
 
@@ -643,7 +661,9 @@ final class RawTextContextUpdater {
           // handled by the InferenceEngine.
           .put(HtmlContext.HTML_PCDATA, ImmutableList.of(TRANSITION_TO_SELF))
           .put(HtmlContext.HTML_COMMENT, ImmutableList.of(TRANSITION_TO_SELF))
-          .put(HtmlContext.HTML_NORMAL_ATTR_VALUE, ImmutableList.of(TRANSITION_TO_SELF))
+          .put(HtmlContext.HTML_NORMAL_ATTR_VALUE, ImmutableList.of(
+                   makeTransitionToMimeType("text/template", Context.ElementType.NORMAL),
+                   TRANSITION_TO_SELF))
           .put(
               HtmlContext.HTML_META_REFRESH_CONTENT,
               ImmutableList.of(
@@ -670,6 +690,7 @@ final class RawTextContextUpdater {
                     }
                   },
                   TRANSITION_TO_SELF))
+
           // The CSS transitions below are based on http://www.w3.org/TR/css3-syntax/#lexical
           .put(
               HtmlContext.CSS,

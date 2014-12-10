@@ -18,6 +18,7 @@ package com.google.template.soy.error;
 
 import com.google.common.base.Preconditions;
 import java.text.MessageFormat;
+import java.util.Arrays;
 
 /**
  * Represents any syntactic or semantic error made by a Soy template author, which can be collected
@@ -49,12 +50,17 @@ public final class SoyErrorKind {
   }
 
   public String format(Object... args) {
-    Preconditions.checkState(
-        args.length == requiredArgs,
-        "Error format required %s parameters, %s were supplied.",
-        requiredArgs,
-        args.length);
-    return messageFormat.format(args);
+    if (args.length == requiredArgs) {
+      return messageFormat.format(args);
+    }
+    // PATCH(robfig): This mismatch happens for some errors in the 2019-03-07 release.
+    // Do our best to create an error message and carry on.
+    String msg = String.format(
+        "Error format required %d parameters, %d were supplied\n"+
+        "Message: %s\n"+
+        "Args: %s", requiredArgs, args.length, messageFormat.toPattern(), Arrays.toString(args));
+    System.err.println("SoyErrorKind: " + msg);
+    return msg;
   }
 
   public static SoyErrorKind of(String format, StyleAllowance... exceptions) {

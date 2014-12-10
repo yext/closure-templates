@@ -2501,6 +2501,25 @@ public final class ContextualAutoescaperTest {
             "{/template}"));
   }
 
+  @Test
+  public void testScriptTextTemplate() {
+    assertContextualRewriting(
+        join(
+            "{namespace ns}\n\n",
+            "{template .main}\n",
+            "  {@param untrusted: ?}\n",
+            "<script type='text/template'>{$untrusted |escapeHtml}</script>",
+            "<script type='text/template' class='foo'>{$untrusted |escapeHtml}</script>\n",
+            "{/template}"),
+        join(
+            "{namespace ns}\n\n",
+            "{template .main}\n",
+            "  {@param untrusted: ?}\n",
+            "<script type='text/template'>{$untrusted}</script>",
+            "<script type='text/template' class='foo'>{$untrusted}</script>\n",
+            "{/template}"));
+  }
+
   // TODO: Tests for dynamic attributes: <a on{$name}="...">,
   // <div data-{$name}={$value}>
 

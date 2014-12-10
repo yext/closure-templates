@@ -302,6 +302,7 @@ public final class Context {
     UriPart uriPart = UriPart.NONE;
     switch (attrType) {
       case PLAIN_TEXT:
+      case TYPE:
         state = HtmlContext.HTML_NORMAL_ATTR_VALUE;
         break;
       case SCRIPT:
@@ -1209,7 +1210,12 @@ public final class Context {
           elType = ElementType.IFRAME;
           break;
         case "script":
-          elType = ElementType.SCRIPT;
+          HtmlAttributeNode typeNode = node.getDirectAttributeNamed("type");
+          if (typeNode != null && Ascii.equalsIgnoreCase(typeNode.getStaticContent(), "text/template")) {
+            elType = ElementType.SCRIPT_HTML;
+          } else {
+            elType = ElementType.SCRIPT;
+          }
           break;
         case "style":
           elType = ElementType.STYLE;
@@ -1287,6 +1293,7 @@ public final class Context {
       case META_REFRESH:
       case IFRAME:
       case MEDIA:
+      case SCRIPT_HTML:
         builder.withState(HtmlContext.HTML_PCDATA).withElType(Context.ElementType.NONE);
         break;
       case NONE:
@@ -1384,6 +1391,8 @@ public final class Context {
         || (elType == ElementType.BASE && "href".equals(attrName))) {
       attr = Context.AttributeType.URI;
       uriType = UriType.TRUSTED_RESOURCE;
+    } else if (elType == Context.ElementType.SCRIPT && "type".equals(attrName)) {
+      attr = Context.AttributeType.TYPE;
     } else if (URI_ATTR_NAMES.contains(localName)
         || CUSTOM_URI_ATTR_NAMING_CONVENTION.matcher(localName).find()
         || "xmlns".equals(attrName)
@@ -1421,6 +1430,9 @@ public final class Context {
 
     /** A script element whose content is raw JavaScript. */
     SCRIPT,
+
+    /** A script element whose content is a HTML template. */
+    SCRIPT_HTML,
 
     /** A style element whose content is raw CSS. */
     STYLE,
@@ -1477,6 +1489,9 @@ public final class Context {
 
     /** The value of content attribute in {@code <meta http-equiv="refresh">}. */
     META_REFRESH_CONTENT,
+
+    /** A Mime-type attribute that specifies the child content type of a special tag. */
+    TYPE,
 
     /** Other content. Human readable or other non-structured plain text or keyword values. */
     PLAIN_TEXT,

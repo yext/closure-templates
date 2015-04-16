@@ -245,6 +245,7 @@ public final class Context {
     UriPart uriPart = UriPart.NONE;
     switch (attrType) {
       case PLAIN_TEXT:
+      case TYPE:
         state = HtmlContext.HTML_NORMAL_ATTR_VALUE;
         break;
       case SCRIPT:
@@ -1058,6 +1059,9 @@ public final class Context {
 
     /** A URI or URI reference. */
     URI,
+
+    /** A Mime-type attribute that specifies the child content type of a special tag. */
+    TYPE,
 
     /** Other content.  Human readable or other non-structured plain text or keyword values. */
     PLAIN_TEXT,

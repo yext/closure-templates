@@ -53,6 +53,7 @@ public class RawTextContextUpdaterTest extends TestCase {
     assertTransition("HTML_PCDATA", "<script>", "JS REGEX");
     assertTransition("HTML_PCDATA", "<script >", "JS REGEX");
     assertTransition("HTML_PCDATA", "<script type=\"text/javascript\">", "JS REGEX");
+    assertTransition("HTML_PCDATA", "<script type=\"text/template\">", "HTML_PCDATA");
     assertTransition("HTML_PCDATA", "<a ", "HTML_TAG NORMAL");
     assertTransition("HTML_PCDATA", "<a title=foo id='x'", "HTML_TAG NORMAL");
     assertTransition("HTML_PCDATA", "<a title=\"foo\"", "HTML_TAG NORMAL");

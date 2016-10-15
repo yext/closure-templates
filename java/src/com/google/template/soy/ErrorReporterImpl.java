@@ -61,17 +61,6 @@ public final class ErrorReporterImpl extends AbstractErrorReporter {
     return !errors.isEmpty();
   }
 
-  public void throwIfErrorsPresent() throws SoySyntaxException {
-    if (!errors.isEmpty()) {
-      SoySyntaxException combined = new SoySyntaxException("errors during Soy compilation");
-      for (SoySyntaxException e : errors) {
-        combined.addSuppressed(e);
-      }
-      errors.clear();
-      throw combined;
-    }
-  }
-
   @Override
   protected int getCurrentNumberOfErrors() {
     return errors.size();

@@ -1076,6 +1076,9 @@ abstract class Context {
               // 😬.
               elType = ElementType.SCRIPT;
               break;
+            case TEMPLATE:
+              elType = ElementType.SCRIPT_HTML;
+              break;
             case UNKNOWN:
               elType = ElementType.SCRIPT_DATA;
               break;
@@ -1147,6 +1150,7 @@ abstract class Context {
   private enum ScriptType {
     JAVASCRIPT,
     JSON,
+    TEMPLATE,
     UNKNOWN;
   }
   // See
@@ -1161,6 +1165,10 @@ abstract class Context {
     // module is a special value
     if (Ascii.equalsIgnoreCase(type, "module")) {
       return ScriptType.JAVASCRIPT;
+    }
+    // text/template is a special value
+    if (Ascii.equalsIgnoreCase(type, "text/template")) {
+      return ScriptType.TEMPLATE;
     }
     MediaType parsed;
     try {
@@ -1228,6 +1236,7 @@ abstract class Context {
       case META_REFRESH:
       case IFRAME:
       case MEDIA:
+      case SCRIPT_HTML:
         builder.withState(HtmlContext.HTML_PCDATA).withElType(Context.ElementType.NONE);
         break;
       case NONE:
@@ -1362,6 +1371,9 @@ abstract class Context {
 
     /** A script element whose content is raw JavaScript. */
     SCRIPT,
+
+    /** A script element whose content is a HTML template. */
+    SCRIPT_HTML,
 
     /**
      * A script element whose content is a data block.

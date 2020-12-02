@@ -456,6 +456,12 @@ public final class RawTextContextUpdaterTest {
         "JS", "`\\${\\`\\${\\`foo\\`}\\`}\\`", "JS_TEMPLATE_LITERAL jsTemplateLiteralNestDepth=1");
   }
 
+  @Test
+  public void testTextTemplateToHtml() {
+    assertTransition("HTML_PCDATA", "<script type=\"text/template\">", "HTML_PCDATA");
+    assertTransition("HTML_PCDATA", "<script type=\"text/template\" class=\"foo\">", "HTML_PCDATA");
+  }
+
   private static void assertTransition(String from, String rawText, String to) {
     Context endContext;
     try {

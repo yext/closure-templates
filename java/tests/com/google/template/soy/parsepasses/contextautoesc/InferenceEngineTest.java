@@ -61,6 +61,9 @@ public final class InferenceEngineTest {
     assertTransitions(
         SanitizedContentKind.HTML, "<title lang='en' {assert('HTML_TAG TITLE')}></title>");
     assertTransitions(SanitizedContentKind.HTML, "<xmp id='en' {assert('HTML_TAG XMP')}></xmp>");
+    assertTransitions(
+        SanitizedContentKind.HTML,
+        "<script type='text/template'>{assert('HTML_PCDATA')}</script>");
 
     // attributes
     assertTransitions(

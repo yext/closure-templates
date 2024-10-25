@@ -58,7 +58,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.protobuf.Descriptors.Descriptor;
 import com.google.protobuf.Descriptors.FieldDescriptor;
-import com.google.protobuf.Descriptors.FileDescriptor.Syntax;
 import com.google.template.soy.base.SourceLocation;
 import com.google.template.soy.error.ErrorReporter;
 import com.google.template.soy.error.SoyErrorKind;
@@ -764,7 +763,7 @@ public class TranslateExprNodeVisitor extends AbstractReturningExprNodeVisitor<E
         // At runtime, this may be null, but we can't tell if this is a non-nullable proto3 field.
         fieldValue =
             fieldValue.castAs(
-                (fieldDesc.getFile().getSyntax() == Syntax.PROTO3 ? "!" : "?")
+                 "!" 
                     + ProtoUtils.calculateJsEnumName(fieldDesc.getEnumType()));
       }
 

@@ -48,7 +48,6 @@ import com.google.protobuf.Descriptors.Descriptor;
 import com.google.protobuf.Descriptors.EnumDescriptor;
 import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.Descriptors.FieldDescriptor.JavaType;
-import com.google.protobuf.Descriptors.FileDescriptor.Syntax;
 import com.google.protobuf.Descriptors.OneofDescriptor;
 import com.google.protobuf.Extension;
 import com.google.protobuf.ExtensionLite;
@@ -1460,8 +1459,7 @@ final class ProtoUtils {
    * exist. Also, in proto2, the 'Value' functions don't exist, so we can't use them.
    */
   private static boolean isProto3EnumField(FieldDescriptor descriptor) {
-    return descriptor.getType() == Descriptors.FieldDescriptor.Type.ENUM
-        && descriptor.getFile().getSyntax() == Syntax.PROTO3;
+    return descriptor.getType() == Descriptors.FieldDescriptor.Type.ENUM;
   }
 
   /** Returns the {@link MethodRef} for the generated hasser method. */
@@ -1732,10 +1730,7 @@ final class ProtoUtils {
       // internally. However, for a repeated enum field in a proto3 message we call
       // getEnumNameValueList (which doesn't exist in proto2 messages and it is what allows proto3
       // to retain unknown enum values), so the values are already ints.
-      if (fieldType.getFile().getSyntax() == Syntax.PROTO3) {
-        return INT.accessor();
-      }
-      return ENUM_FROM_PROTO.accessor();
+      return INT.accessor();
     }
   }
 }

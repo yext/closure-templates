@@ -33,7 +33,6 @@ import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.Descriptors.FieldDescriptor.JavaType;
 import com.google.protobuf.Descriptors.FieldDescriptor.Type;
 import com.google.protobuf.Descriptors.FileDescriptor;
-import com.google.protobuf.Descriptors.FileDescriptor.Syntax;
 import com.google.protobuf.Descriptors.GenericDescriptor;
 import com.google.protobuf.ExtensionRegistry;
 import javax.annotation.Nullable;
@@ -203,7 +202,7 @@ public final class ProtoUtils {
     boolean hasBrokenSemantics = false;
     if (desc.hasDefaultValue() || desc.isRepeated()) {
       return false;
-    } else if (desc.getFile().getSyntax() == Syntax.PROTO3 || !hasBrokenSemantics) {
+    } else if (!hasBrokenSemantics) {
       // in proto3 or proto2 with non-broken semantics we only need to check for presence for
       // message typed fields.
       return desc.getJavaType() == JavaType.MESSAGE;

@@ -77,7 +77,7 @@
     <guava.version>25.1-jre</guava.version>
     <asm.version>7.0</asm.version>
     <autovalue.version>1.6.3</autovalue.version>
-    <proto.version>3.3.0</proto.version>
+    <proto.version>4.28.2</proto.version>
     <truth.version>0.45</truth.version>
     <soy.examples>${project.basedir}/examples</soy.examples>
     <soy.examples.out>${project.build.directory}/examples</soy.examples.out>
@@ -176,26 +176,9 @@
     <dependency>
       <groupId>com.google.common.html.types</groupId>
       <artifactId>types</artifactId>
-      <version>1.0.6</version>
-      <exclusions>
-        <exclusion>
-          <groupId>com.google.errorprone</groupId>
-          <artifactId>error_prone_annotations</artifactId>
-        </exclusion>
-        <!-- still depends on guava 19. exclude it. -->
-        <exclusion>
-          <groupId>com.google.guava</groupId>
-          <artifactId>guava-testlib</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.google.guava</groupId>
-          <artifactId>guava</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.google.protobuf</groupId>
-          <artifactId>protobuf-java</artifactId>
-        </exclusion>
-      </exclusions>
+      <version>1.0.9</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/src/main/resources/google-html-types-1.0.9-SNAPSHOT.jar</systemPath>
     </dependency>
 
     <dependency>
@@ -506,62 +489,6 @@
             <version>1.0-beta-4</version>
           </dependency>
         </dependencies>
-        <executions>
-          <execution>
-            <id>enforce-files-exist</id>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-            <phase>verify</phase>
-            <configuration>
-              <rules>
-                <requireFilesExist>
-                  <files>
-                    <file>${soy.examples.out}/simple_generated.js</file>
-                    <file>${soy.examples.out}/simple_generated_en.js</file>
-                    <file>${soy.examples.out}/features_generated_en.js</file>
-                    <file>${soy.examples.out}/simple_generated_x-zz.js</file>
-                    <file>${soy.examples.out}/features_generated_x-zz.js</file>
-                    <file>${soy.examples.out}/FeaturesSoyInfo.java</file>
-                    <file>${soy.examples.out}/examples_extracted.xlf</file>
-                    <file>${project.build.directory}/soy-${project.version}-jssrc_js.jar</file>
-                  </files>
-                </requireFilesExist>
-                <!-- fences-maven-enforcer-rule doesn't support Java 9 yet, see
-                     https://github.com/mikesamuel/fences-maven-enforcer-rule/pull/12
-                <!- -
-                  See http://mikesamuel.github.io/fences-maven-enforcer-rule/getting_started.html
-                - ->
-                <fences implementation="com.google.security.fences.FencesMavenEnforcerRule">
-                  <!- - The compiled JAR should not violate the policy it itself exports
-                      (see fences.xml). - ->
-                  <import>com.google.template:soy</import>
-                </fences>
-                -->
-              </rules>
-              <fail>true</fail>
-            </configuration>
-          </execution>
-          <execution>
-            <id>enforce</id>
-            <configuration>
-              <rules>
-                <DependencyConvergence/>
-                <banDuplicateClasses>
-                  <findAllDuplicates>true</findAllDuplicates>
-                  <ignoreClasses>
-                    <!-- see https://issues.apache.org/jira/browse/MENFORCER-283 -->
-                    <ignoreClass>module-info</ignoreClass>
-                  </ignoreClasses>
-                </banDuplicateClasses>
-              </rules>
-              <fail>true</fail>
-            </configuration>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -778,165 +705,6 @@
         <configuration>
           <detail>true</detail>
         </configuration>
-        <executions>
-          <execution>
-            <id>js-simple-example</id>
-            <phase>pre-integration-test</phase>
-            <configuration>
-              <executable>${java.home}/bin/java</executable>
-              <arguments>
-                <argument>-jar</argument>
-                <argument>
-                  ${project.build.directory}/${project.build.finalName}-SoyToJsSrcCompiler.jar
-                </argument>
-                <argument>--outputPathFormat</argument>
-                <argument>
-                  ${soy.examples.out}/{INPUT_FILE_NAME_NO_EXT}_generated.js
-                </argument>
-                <argument>--srcs</argument>
-                <argument>${soy.examples}/simple.soy</argument>
-              </arguments>
-            </configuration>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>js-features-example</id>
-            <phase>pre-integration-test</phase>
-            <configuration>
-              <executable>${java.home}/bin/java</executable>
-              <arguments>
-                <argument>-jar</argument>
-                <argument>
-                  ${project.build.directory}/${project.build.finalName}-SoyToJsSrcCompiler.jar
-                </argument>
-                <argument>--outputPathFormat</argument>
-                <argument>
-                  ${soy.examples.out}/{INPUT_FILE_NAME_NO_EXT}_generated_{LOCALE}.js
-                </argument>
-                <argument>--locales</argument>
-                <argument>en,x-zz</argument>
-                <argument>--messageFilePathFormat</argument>
-                <argument>${soy.examples}/examples_translated_{LOCALE}.xlf</argument>
-                <argument>--compileTimeGlobalsFile</argument>
-                <argument>${project.basedir}/javascript/examples/features-usage_globals.txt
-                </argument>
-                <argument>--srcs</argument>
-                <argument>${soy.examples}/simple.soy,${soy.examples}/features.soy</argument>
-              </arguments>
-            </configuration>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>java-simple-example</id>
-            <phase>pre-integration-test</phase>
-            <configuration>
-              <mainClass>com.google.template.soy.examples.SimpleUsage</mainClass>
-              <cleanupDaemonThreads>false</cleanupDaemonThreads>
-              <additionalClasspathElements>
-                <additionalClasspathElement>
-                  ${soy.examples}/
-                </additionalClasspathElement>
-              </additionalClasspathElements>
-            </configuration>
-            <goals>
-              <goal>java</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>java-features-example</id>
-            <phase>pre-integration-test</phase>
-            <configuration>
-              <mainClass>com.google.template.soy.examples.FeaturesUsage</mainClass>
-              <cleanupDaemonThreads>false</cleanupDaemonThreads>
-              <additionalClasspathElements>
-                <additionalClasspathElement>${soy.examples}/</additionalClasspathElement>
-                <additionalClasspathElement>
-                  ${project.build.sourceDirectory}/com/google/template/soy/examples/
-                </additionalClasspathElement>
-              </additionalClasspathElements>
-            </configuration>
-            <goals>
-              <goal>java</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>parse-info-generation-example</id>
-            <phase>pre-integration-test</phase>
-            <configuration>
-              <executable>${java.home}/bin/java</executable>
-              <arguments>
-                <argument>-jar</argument>
-                <argument>
-                  ${project.build.directory}/${project.build.finalName}-SoyParseInfoGenerator.jar
-                </argument>
-                <argument>--outputDirectory</argument>
-                <argument>${soy.examples.out}/</argument>
-                <argument>--javaPackage</argument>
-                <argument>com.google.template.soy.examples</argument>
-                <argument>--javaClassNameSource</argument>
-                <argument>filename</argument>
-                <argument>--compileTimeGlobalsFile</argument>
-                <argument>${project.basedir}/javascript/examples/features-usage_globals.txt
-                </argument>
-                <argument>--srcs</argument>
-                <argument>${soy.examples}/features.soy</argument>
-              </arguments>
-            </configuration>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>msg-extraction-example</id>
-            <phase>pre-integration-test</phase>
-            <configuration>
-              <executable>${java.home}/bin/java</executable>
-              <arguments>
-                <argument>-jar</argument>
-                <argument>
-                  ${project.build.directory}/${project.build.finalName}-SoyMsgExtractor.jar
-                </argument>
-                <argument>--outputFile</argument>
-                <argument>${soy.examples.out}/examples_extracted.xlf
-                </argument>
-                <argument>--srcs</argument>
-                <argument>${soy.examples}/simple.soy,${soy.examples}/features.soy</argument>
-              </arguments>
-            </configuration>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>jbcsrc-generation-example</id>
-            <phase>pre-integration-test</phase>
-            <configuration>
-              <executable>${java.home}/bin/java</executable>
-              <arguments>
-                <argument>-jar</argument>
-                <argument>
-                  ${project.build.directory}/${project.build.finalName}-SoyToJbcSrcCompiler.jar
-                </argument>
-                <argument>--output</argument>
-                <argument>${soy.examples.out}/examples.jar</argument>
-                <argument>--outputSrcJar</argument>
-                <argument>${soy.examples.out}/examples-src.jar</argument>
-                <argument>--compileTimeGlobalsFile</argument>
-                <argument>${project.basedir}/javascript/examples/features-usage_globals.txt
-                </argument>
-                <argument>--srcs</argument>
-                <argument>${soy.examples}/simple.soy,${soy.examples}/features.soy</argument>
-              </arguments>
-            </configuration>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -966,23 +734,6 @@
             <version>6.1.2</version>
           </dependency>
         </dependencies>
-      </plugin>
-      <plugin>
-        <groupId>no.hassle.maven.plugins</groupId>
-        <artifactId>protoc-bundled-plugin</artifactId>
-        <version>2.0.0</version>
-        <configuration>
-          <importDirectories>
-            <importDirectory>${project.basedir}</importDirectory>
-          </importDirectories>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
           <groupId>org.apache.maven.plugins</groupId>

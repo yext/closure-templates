@@ -28,7 +28,6 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.Descriptors.FieldDescriptor.JavaType;
-import com.google.protobuf.Descriptors.FileDescriptor.Syntax;
 import com.google.template.soy.error.ErrorReporter;
 import com.google.template.soy.error.SoyErrorKind;
 import com.google.template.soy.error.SoyErrorKind.StyleAllowance;
@@ -124,11 +123,8 @@ public enum BuiltinMethod implements SoyMethod {
       if (fd.isExtension() || fd.isRepeated() || fd.getJavaType() == JavaType.MESSAGE) {
         return false;
       }
-      if (fd.getFile().getSyntax() == Syntax.PROTO3) {
-        return false;
-      }
 
-      return true;
+      return false;
     }
 
     @Override
